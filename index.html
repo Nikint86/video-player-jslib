@@ -17,12 +17,11 @@
             min-height: 100vh;
         }
 
-        #player {
+        .player-container {
             width: 800px;
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-            position: relative;
         }
 
         .js-video-container {
@@ -61,7 +60,7 @@
 </head>
 <body>
 
-<div id="player">
+<div id="player" class="player-container">
     <div class="js-video-container"></div>
     <div class="controls-panel">
         <button class="js-play-button player-button">▶</button>
