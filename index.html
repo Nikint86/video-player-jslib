@@ -36,10 +36,10 @@
 
         .controls-panel {
             background: black;
-            padding: 12px 16px;
+            padding: 16px 20px;
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 20px;
         }
 
         .player-button {
@@ -55,10 +55,17 @@
             font-size: 28px;
             padding: 0;
             line-height: 1;
+            border-radius: 8px;
+            transition: background 0.2s;
         }
 
         .player-button:hover {
-            opacity: 0.8;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Кнопка Fullscreen прижимается к правому краю */
+        .js-fullscreen-button {
+            margin-left: auto;
         }
     </style>
 </head>
@@ -69,8 +76,11 @@
     <div class="controls-panel">
         <button class="js-play-button player-button">▶</button>
         <button class="js-pause-button player-button" hidden>⏸</button>
+
         <button class="js-mute-button player-button">🔇</button>
         <button class="js-volume-button player-button" hidden>🔊</button>
+
+        <button class="js-fullscreen-button player-button">⛶</button>
     </div>
 </div>
 
