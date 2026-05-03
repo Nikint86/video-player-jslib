@@ -18,6 +18,18 @@
             border: none;
             cursor: pointer;
         }
+
+        .controls-panel {
+            background-color: black;
+            width: 800px;
+            padding: 10px 15px;
+
+            /* Flexbox — кнопка слева */
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 12px;
+        }
     </style>
 </head>
 <body>
@@ -26,7 +38,9 @@
     <div class="js-video-container"></div>
 </div>
 
-<button class="js-play-button">▶</button>
+<div class="controls-panel">
+    <button class="js-play-button">▶</button>
+</div>
 
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <script src="https://unpkg.com/playable@2.10.3/dist/statics/playable.bundle.min.js"></script>
