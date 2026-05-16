@@ -9,6 +9,8 @@
 
 Построен на базе библиотеки [Playable](https://wix.github.io/playable/).
 
+**Живая демонстрация:** [посмотреть работающий плеер](https://nikint86.github.io/video-player-jslib/)
+
 ## Примеры
 
 Два рабочих примера:
