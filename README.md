@@ -9,6 +9,8 @@
 
 Построен на базе библиотеки [Playable](https://wix.github.io/playable/).
 
+**Живая демонстрация:** [посмотреть работающий плеер](https://nikint86.github.io/video-player-jslib/)
+
 ## Примеры
 
 Два рабочих примера:
@@ -92,3 +94,7 @@ JS код поставляется в виде одного файла `player.j
   <div class="js-progress-slider" style="background-color: red;">Прогресс</div>
 </div>
 ```
+</script>
+
+</body>
+</html>
