@@ -42,9 +42,65 @@
             padding: 12px 16px;
             display: flex;
             align-items: center;
+            margin-left: -8px;
+        }
+
+        .left-group {
+            display: flex;
+            align-items: center;
             gap: 28px;
             flex-shrink: 0;
-            margin-left: -8px;
+        }
+
+        .right-group {
+            display: flex;
+            align-items: center;
+            gap: 28px;
+            flex-shrink: 0;
+        }
+
+        .progress-wrapper {
+            flex: 1;
+            display: flex;
+            justify-content: flex-start;
+            margin: 0 16px;
+        }
+
+        .progress-bar {
+            width: 24%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .progress-slider {
+            width: 0%;
+            height: 100%;
+            background: #FF3B30;
+            border-radius: 2px;
+            position: relative;
+        }
+
+        .progress-slider::after {
+            content: '';
+            position: absolute;
+            right: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 9px;
+            height: 9px;
+            background: #FF3B30;
+            border: 2px solid white;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+            transition: transform 0.1s ease;
+        }
+
+        .progress-slider::after:hover {
+            transform: translateY(-50%) scale(1.2);
         }
 
         .custom-button {
@@ -97,10 +153,6 @@
             top: 2px;
         }
 
-        .spacer {
-            flex: 1;
-        }
-
         .custom-button[hidden] {
             display: none !important;
         }
@@ -112,19 +164,26 @@
     <div class="js-video-container"></div>
 
     <div class="controls-panel">
-        <button class="js-play-button custom-button"><i class="fas fa-play"></i></button>
-        <button class="js-pause-button custom-button" hidden><i class="fas fa-pause"></i></button>
+        <div class="left-group">
+            <button class="js-play-button custom-button"><i class="fas fa-play"></i></button>
+            <button class="js-pause-button custom-button" hidden><i class="fas fa-pause"></i></button>
 
-        <button class="js-mute-button custom-button"><i class="fas fa-volume-mute"></i></button>
-        <button class="js-volume-button custom-button" hidden><i class="fas fa-volume-up"></i></button>
+            <button class="js-mute-button custom-button"><i class="fas fa-volume-mute"></i></button>
+            <button class="js-volume-button custom-button" hidden><i class="fas fa-volume-up"></i></button>
 
-        <span class="js-current-time time-current">0:00:00</span>
+            <span class="js-current-time time-current">0:00:00</span>
+        </div>
 
-        <div class="spacer"></div>
+        <div class="progress-wrapper">
+            <div class="js-progress progress-bar">
+                <div class="js-progress-slider progress-slider"></div>
+            </div>
+        </div>
 
-        <span class="js-duration time-duration">0:00:00</span>
-
-        <button class="js-fullscreen-button custom-button"><i class="fas fa-expand"></i></button>
+        <div class="right-group">
+            <span class="js-duration time-duration">0:00:00</span>
+            <button class="js-fullscreen-button custom-button"><i class="fas fa-expand"></i></button>
+        </div>
     </div>
 </div>
 

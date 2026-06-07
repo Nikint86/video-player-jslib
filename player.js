@@ -101,4 +101,91 @@ function createPlayer({
   if ($fullscreenButton.length) {
     $fullscreenButton.click(() => player.enterFullScreen());
   }
+
+  // ========== TIMER & PROGRESS BAR ==========
+  (function activateTimerAndProgress() {
+    const $currentTime = $playerContainer.find('.js-current-time');
+    const $duration = $playerContainer.find('.js-duration');
+    const $progress = $playerContainer.find('.js-progress');
+    const $progressSlider = $playerContainer.find('.js-progress-slider');
+
+    function formatTime(seconds) {
+      if (isNaN(seconds)) return '0:00:00';
+      const hrs = Math.floor(seconds / 3600);
+      const mins = Math.floor((seconds % 3600) / 60);
+      const secs = Math.floor(seconds % 60);
+
+      return `${hrs}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    function updateTimeAndProgress() {
+      const currentTime = player.getCurrentTime();
+      const duration = player.getDuration();
+
+      if ($currentTime.length) {
+        $currentTime.text(formatTime(currentTime));
+      }
+
+      if ($duration.length && duration) {
+        $duration.text(formatTime(duration));
+      }
+
+      if ($progressSlider.length && duration) {
+        const percent = (currentTime / duration) * 100;
+        $progressSlider.css('width', `${percent}%`);
+      }
+    }
+
+    if ($progress.length) {
+      $progress.click((event) => {
+        const duration = player.getDuration();
+        if (!duration) return;
+
+        const rect = event.currentTarget.getBoundingClientRect();
+        const clickX = event.clientX - rect.left;
+        const percent = clickX / rect.width;
+        const seekTime = percent * duration;
+        player.seekTo(seekTime);
+      });
+    }
+
+    let updateInterval = null;
+
+    function startUpdating() {
+      if (updateInterval) clearInterval(updateInterval);
+      updateInterval = setInterval(() => {
+        updateTimeAndProgress();
+      }, 200);
+    }
+
+    function stopUpdating() {
+      if (updateInterval) {
+        clearInterval(updateInterval);
+        updateInterval = null;
+      }
+    }
+
+    player.on(Playable.ENGINE_STATES.PLAYING, () => {
+      startUpdating();
+    });
+
+    player.on(Playable.ENGINE_STATES.PAUSED, () => {
+      updateTimeAndProgress();
+    });
+
+    player.on(Playable.ENGINE_STATES.ENDED, () => {
+      stopUpdating();
+      updateTimeAndProgress();
+    });
+
+    player.on(Playable.VIDEO_EVENTS.LOADED_METADATA, () => {
+      updateTimeAndProgress();
+    });
+
+    player.on(Playable.VIDEO_EVENTS.SEEKED, () => {
+      updateTimeAndProgress();
+    });
+
+    updateTimeAndProgress();
+  })();
 }
