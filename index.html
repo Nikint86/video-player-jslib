@@ -130,8 +130,21 @@
             top: 2px;
         }
 
+        .custom-button:focus,
+        .custom-button:focus-visible,
+        .custom-button:active {
+            outline: none;
+            box-shadow: none;
+        }
+
         .custom-button:hover {
             background: rgba(255, 255, 255, 0.15);
+        }
+
+        button:focus,
+        button:focus-visible {
+            outline: none;
+            box-shadow: none;
         }
 
         .js-volume-button,
