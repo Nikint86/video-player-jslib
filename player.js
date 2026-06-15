@@ -9,183 +9,122 @@ function createPlayer({
     hideMainUI: true,
   });
 
-  const playerContainer = document.getElementById(elementId)
+  const playerContainer = document.getElementById(elementId);
 
   if (!playerContainer) {
     throw Error(`Element with id "${elementId}" not found.`);
   }
 
   const videoContainers = playerContainer.getElementsByClassName('js-video-container');
-
   if (!videoContainers.length) {
     throw Error(`Element with class "js-video-container" not found.`);
-  }
-
-  if (videoContainers.length > 1) {
-    throw Error(`Expects single element with class "js-video-container", but ${videoContainers.length} were found.`);
   }
 
   const videoContainer = videoContainers[0];
   player.attachToElement(videoContainer);
 
-  const $playerContainer = $(playerContainer);
+  const playBtn = playerContainer.querySelector('.js-play-button');
+  const pauseBtn = playerContainer.querySelector('.js-pause-button');
+  const volumeBtn = playerContainer.querySelector('.js-volume-button');
+  const muteBtn = playerContainer.querySelector('.js-mute-button');
+  const fullscreenBtn = playerContainer.querySelector('.js-fullscreen-button');
+  const currentTimeSpan = playerContainer.querySelector('.js-current-time');
+  const durationSpan = playerContainer.querySelector('.js-duration');
+  const progressBar = playerContainer.querySelector('.js-progress');
+  const progressSlider = playerContainer.querySelector('.js-progress-slider');
 
   // ========== PLAY / PAUSE ==========
-  (function activatePlayButtons() {
-    const $playButton = $playerContainer.find('.js-play-button');
-    const $pauseButton = $playerContainer.find('.js-pause-button');
-
-    if ($playButton.length) {
-      $playButton.click(() => player.play());
-    }
-    if ($pauseButton.length) {
-      $pauseButton.click(() => player.pause());
-    }
-
-    function activatePlayBtn() {
-      if ($playButton.length) $playButton.attr("hidden", false);
-      if ($pauseButton.length) $pauseButton.attr("hidden", true);
-    }
-
-    function activatePauseBtn() {
-      if ($playButton.length) $playButton.attr("hidden", true);
-      if ($pauseButton.length) $pauseButton.attr("hidden", false);
-    }
-
-    activatePlayBtn();
-
-    player.on(Playable.ENGINE_STATES.PLAYING, activatePauseBtn);
-    player.on(Playable.ENGINE_STATES.PAUSED, activatePlayBtn);
-    player.on(Playable.ENGINE_STATES.ENDED, () => {
-      player.reset();
-      activatePlayBtn();
-    });
-  })();
-
-  // ========== MUTE / VOLUME ==========
-  (function activateVolumeButtons() {
-    const $volumeButton = $playerContainer.find('.js-volume-button');
-    const $muteButton = $playerContainer.find('.js-mute-button');
-
-    if ($volumeButton.length) {
-      $volumeButton.click(() => player.setVolume(100));
-    }
-    if ($muteButton.length) {
-      $muteButton.click(() => player.setVolume(0));
-    }
-
-    function activateVolumeButton() {
-      if ($volumeButton.length) $volumeButton.attr("hidden", false);
-      if ($muteButton.length) $muteButton.attr("hidden", true);
-    }
-
-    function activateMuteBtn() {
-      if ($volumeButton.length) $volumeButton.attr("hidden", true);
-      if ($muteButton.length) $muteButton.attr("hidden", false);
-    }
-
-    function toggleVolumeMuteBtns() {
-      if (player.getVolume() > 0) {
-        activateMuteBtn();
-      } else {
-        activateVolumeButton();
-      }
-    }
-
-    player.on(Playable.VIDEO_EVENTS.VOLUME_CHANGED, toggleVolumeMuteBtns);
-    toggleVolumeMuteBtns();
-  })();
-
-  // ========== FULLSCREEN ==========
-  const $fullscreenButton = $playerContainer.find('.js-fullscreen-button');
-  if ($fullscreenButton.length) {
-    $fullscreenButton.click(() => player.enterFullScreen());
+  function updatePlayPauseButtons(isPlaying) {
+    if (playBtn) playBtn.hidden = isPlaying;
+    if (pauseBtn) pauseBtn.hidden = !isPlaying;
   }
 
-  // ========== TIMER & PROGRESS BAR ==========
-  (function activateTimerAndProgress() {
-    const $currentTime = $playerContainer.find('.js-current-time');
-    const $duration = $playerContainer.find('.js-duration');
-    const $progress = $playerContainer.find('.js-progress');
-    const $progressSlider = $playerContainer.find('.js-progress-slider');
+  if (playBtn) {
+    playBtn.addEventListener('click', () => player.play());
+  }
+  if (pauseBtn) {
+    pauseBtn.addEventListener('click', () => player.pause());
+  }
 
-    function formatTime(seconds) {
-      if (isNaN(seconds)) return '0:00:00';
-      const hrs = Math.floor(seconds / 3600);
-      const mins = Math.floor((seconds % 3600) / 60);
-      const secs = Math.floor(seconds % 60);
+  player.on(Playable.ENGINE_STATES.PLAYING, () => updatePlayPauseButtons(true));
+  player.on(Playable.ENGINE_STATES.PAUSED, () => updatePlayPauseButtons(false));
+  player.on(Playable.ENGINE_STATES.ENDED, () => {
+    player.reset();
+    updatePlayPauseButtons(false);
+  });
+  updatePlayPauseButtons(false);
 
-      return `${hrs}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  // ========== VOLUME / MUTE  ==========
+  if (volumeBtn) {
+    volumeBtn.addEventListener('click', () => {
+      player.setVolume(0);
+      volumeBtn.hidden = true;
+      muteBtn.hidden = false;
+    });
+  }
+
+  if (muteBtn) {
+    muteBtn.addEventListener('click', () => {
+      player.setVolume(100);
+      volumeBtn.hidden = false;
+      muteBtn.hidden = true;
+    });
+  }
+
+  player.setVolume(100);
+  if (volumeBtn) volumeBtn.hidden = false;
+  if (muteBtn) muteBtn.hidden = true;
+
+  // ========== FULLSCREEN ==========
+  if (fullscreenBtn) {
+    fullscreenBtn.addEventListener('click', () => {
+      player.enterFullScreen();
+    });
+  }
+
+  // ========== TIMER & PROGRESS ==========
+  function formatTime(seconds) {
+    if (isNaN(seconds)) return '0:00:00';
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${hrs}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  }
+
+  function updateTimerAndProgress() {
+    const current = player.getCurrentTime();
+    const duration = player.getDuration();
+    if (currentTimeSpan) currentTimeSpan.textContent = formatTime(current);
+    if (durationSpan && duration) durationSpan.textContent = formatTime(duration);
+    if (progressSlider && duration) {
+      const percent = (current / duration) * 100;
+      progressSlider.style.width = `${percent}%`;
     }
+  }
 
-    function updateTimeAndProgress() {
-      const currentTime = player.getCurrentTime();
+  if (progressBar) {
+    progressBar.addEventListener('click', (e) => {
       const duration = player.getDuration();
-
-      if ($currentTime.length) {
-        $currentTime.text(formatTime(currentTime));
-      }
-
-      if ($duration.length && duration) {
-        $duration.text(formatTime(duration));
-      }
-
-      if ($progressSlider.length && duration) {
-        const percent = (currentTime / duration) * 100;
-        $progressSlider.css('width', `${percent}%`);
-      }
-    }
-
-    if ($progress.length) {
-      $progress.click((event) => {
-        const duration = player.getDuration();
-        if (!duration) return;
-
-        const rect = event.currentTarget.getBoundingClientRect();
-        const clickX = event.clientX - rect.left;
-        const percent = clickX / rect.width;
-        const seekTime = percent * duration;
-        player.seekTo(seekTime);
-      });
-    }
-
-    let updateInterval = null;
-
-    function startUpdating() {
-      if (updateInterval) clearInterval(updateInterval);
-      updateInterval = setInterval(() => {
-        updateTimeAndProgress();
-      }, 200);
-    }
-
-    function stopUpdating() {
-      if (updateInterval) {
-        clearInterval(updateInterval);
-        updateInterval = null;
-      }
-    }
-
-    player.on(Playable.ENGINE_STATES.PLAYING, () => {
-      startUpdating();
+      if (!duration) return;
+      const rect = progressBar.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const percent = clickX / rect.width;
+      player.seekTo(percent * duration);
     });
+  }
 
-    player.on(Playable.ENGINE_STATES.PAUSED, () => {
-      updateTimeAndProgress();
-    });
+  let updateInterval = null;
+  player.on(Playable.ENGINE_STATES.PLAYING, () => {
+    if (updateInterval) clearInterval(updateInterval);
+    updateInterval = setInterval(updateTimerAndProgress, 200);
+  });
+  player.on(Playable.ENGINE_STATES.PAUSED, updateTimerAndProgress);
+  player.on(Playable.ENGINE_STATES.ENDED, () => {
+    if (updateInterval) clearInterval(updateInterval);
+    updateTimerAndProgress();
+  });
+  player.on(Playable.VIDEO_EVENTS.LOADED_METADATA, updateTimerAndProgress);
+  player.on(Playable.VIDEO_EVENTS.SEEKED, updateTimerAndProgress);
 
-    player.on(Playable.ENGINE_STATES.ENDED, () => {
-      stopUpdating();
-      updateTimeAndProgress();
-    });
-
-    player.on(Playable.VIDEO_EVENTS.LOADED_METADATA, () => {
-      updateTimeAndProgress();
-    });
-
-    player.on(Playable.VIDEO_EVENTS.SEEKED, () => {
-      updateTimeAndProgress();
-    });
-
-    updateTimeAndProgress();
-  })();
+  updateTimerAndProgress();
 }
