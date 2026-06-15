@@ -25,49 +25,83 @@
             width: 800px;
             height: 600px;
             background: black;
-            border-radius: 0;
             overflow: hidden;
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
             display: flex;
             flex-direction: column;
         }
 
-        .js-video-container {
+        .video-container {
             flex: 1;
             background: black;
         }
 
         .controls-panel {
             background: black;
-            padding: 12px 16px;
+            padding: 12px 20px;
             display: flex;
             align-items: center;
-            margin-left: -8px;
+            gap: 20px;
         }
 
-        .left-group {
+        .buttons-left {
             display: flex;
             align-items: center;
-            gap: 28px;
+            gap: 20px;
             flex-shrink: 0;
         }
 
-        .right-group {
+        .timeline {
             display: flex;
             align-items: center;
-            gap: 28px;
-            flex-shrink: 0;
-        }
-
-        .progress-wrapper {
+            gap: 16px;
             flex: 1;
-            display: flex;
-            justify-content: flex-start;
-            margin: 0 16px;
         }
 
-        .progress-bar {
-            width: 24%;
+        .buttons-right {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .player-btn {
+            border: none;
+            cursor: pointer;
+            background: none;
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 16px;
+            height: 24px;
+            font-size: 16px;
+            padding: 0;
+            line-height: 1;
+            transition: opacity 0.2s;
+        }
+
+        .player-btn:hover {
+            opacity: 0.7;
+        }
+
+        .player-btn:focus,
+        .player-btn:focus-visible,
+        .player-btn:active {
+            outline: none;
+            box-shadow: none;
+        }
+
+        .time {
+            color: white;
+            font-family: 'Roboto', monospace;
+            font-size: 15px;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            flex-shrink: 0;
+        }
+
+        .progress {
+            flex: 1;
             height: 4px;
             background: black;
             border-radius: 2px;
@@ -75,7 +109,7 @@
             position: relative;
         }
 
-        .progress-slider {
+        .progress-filled {
             width: 0%;
             height: 100%;
             background: #FF3B30;
@@ -83,7 +117,7 @@
             position: relative;
         }
 
-        .progress-slider::after {
+        .progress-filled::after {
             content: '';
             position: absolute;
             right: -4.5px;
@@ -95,86 +129,21 @@
             border: 2px solid white;
             border-radius: 50%;
             cursor: pointer;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-            transition: opacity 0.3s ease, transform 0.2s ease, visibility 0.3s ease;
+            transition: opacity 0.3s ease, transform 0.2s ease;
             opacity: 0;
             visibility: hidden;
         }
 
-        .progress-bar:hover .progress-slider::after {
+        .progress:hover .progress-filled::after {
             opacity: 1;
             visibility: visible;
         }
 
-        .progress-slider::after:hover {
+        .progress-filled::after:hover {
             transform: translateY(-50%) scale(1.2);
-            transition: transform 0.15s ease;
         }
 
-        .custom-button {
-            border: none;
-            cursor: pointer;
-            background: none;
-            color: white;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 12px;
-            height: 24px;
-            font-size: 16px;
-            padding: 0;
-            line-height: 1;
-            border-radius: 0;
-            transition: background 0.2s;
-            position: relative;
-            top: 2px;
-        }
-
-        .custom-button:focus,
-        .custom-button:focus-visible,
-        .custom-button:active {
-            outline: none;
-            box-shadow: none;
-        }
-
-        .custom-button:hover {
-            background: rgba(255, 255, 255, 0.15);
-        }
-
-        button:focus,
-        button:focus-visible {
-            outline: none;
-            box-shadow: none;
-        }
-
-        .js-volume-button,
-        .js-mute-button {
-            margin-left: 0;
-        }
-
-        .time-current {
-            color: white;
-            font-family: 'Roboto', monospace;
-            font-size: 15px;
-            font-weight: 400;
-            letter-spacing: 0.5px;
-            position: relative;
-            top: 2px;
-            margin-left: -16px;
-        }
-
-        .time-duration {
-            color: white;
-            font-family: 'Roboto', monospace;
-            font-size: 15px;
-            font-weight: 400;
-            letter-spacing: 0.5px;
-            margin-right: -12px;
-            position: relative;
-            top: 2px;
-        }
-
-        .custom-button[hidden] {
+        [hidden] {
             display: none !important;
         }
     </style>
@@ -182,28 +151,27 @@
 <body>
 
 <div id="player">
-    <div class="js-video-container"></div>
+    <div class="js-video-container video-container"></div>
 
     <div class="controls-panel">
-        <div class="left-group">
-            <button class="js-play-button custom-button"><i class="fas fa-play"></i></button>
-            <button class="js-pause-button custom-button" hidden><i class="fas fa-pause"></i></button>
+        <div class="buttons-left">
+            <button class="js-play-button player-btn"><i class="fas fa-play"></i></button>
+            <button class="js-pause-button player-btn" hidden><i class="fas fa-pause"></i></button>
 
-            <button class="js-mute-button custom-button"><i class="fas fa-volume-mute"></i></button>
-            <button class="js-volume-button custom-button" hidden><i class="fas fa-volume-up"></i></button>
-
-            <span class="js-current-time time-current">0:00:00</span>
+            <button class="js-volume-button player-btn"><i class="fas fa-volume-up"></i></button>
+            <button class="js-mute-button player-btn" hidden><i class="fas fa-volume-mute"></i></button>
         </div>
 
-        <div class="progress-wrapper">
-            <div class="js-progress progress-bar">
-                <div class="js-progress-slider progress-slider"></div>
+        <div class="timeline">
+            <span class="js-current-time time">0:00:00</span>
+            <div class="js-progress progress">
+                <div class="js-progress-slider progress-filled"></div>
             </div>
+            <span class="js-duration time">0:00:00</span>
         </div>
 
-        <div class="right-group">
-            <span class="js-duration time-duration">0:00:00</span>
-            <button class="js-fullscreen-button custom-button"><i class="fas fa-expand"></i></button>
+        <div class="buttons-right">
+            <button class="js-fullscreen-button player-btn"><i class="fas fa-expand"></i></button>
         </div>
     </div>
 </div>
